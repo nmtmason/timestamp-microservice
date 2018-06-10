@@ -4,15 +4,15 @@
   "main": "src/index.js",
   "repository": {},
   "author": "Nicholas Mason <nmt.mason@googlemail.com>",
-  "license": "MIT",
-  "devDependencies": {
-    "nodemon": "^1.17.5"
-  },
+  "license": "ISC",
   "scripts": {
     "start": "node src/index.js",
     "watch": "nodemon src/index.js"
   },
   "dependencies": {
     "dotenv": "^6.0.0"
+  },
+  "devDependencies": {
+    "nodemon": "^1.17.5"
   }
 }
