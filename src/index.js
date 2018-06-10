@@ -1,69 +1,58 @@
-var http = require('http');
-var url = require('url');
+const http = require('http');
+const url = require('url');
+const querystring = require('querystring');
 
-var handler = {
-  routes: [],
-  addRoute: function(pattern, handler) {
-    this.routes.push({ pattern: pattern, handler: handler.bind(this) });
-  },
-  getRoute: function getRoute(pathname) {
-    for (var i = 0; i < this.routes.length; i++) {
-      var route = this.routes[i];
-      if (route.pattern.test(pathname)) {
-        return route;
-      }
-    }
-    return undefined;
+const Handler = require('./handler');
+
+let handler = new Handler();
+
+const isValidDate = date => {
+  return date instanceof Date && !isNaN(date);
+};
+
+const createResponse = date => {
+  if (!isValidDate) {
+    return {
+      error: 'Invalid Date'
+    };
   }
+
+  return {
+    unix: date.getTime(),
+    utc: date.toUTCString()
+  };
 };
 
-var routes = Object.create(handler);
-
-routes.createResponse = function(date) {
-  var months = [
-    'January',
-    'February',
-    'March',
-    'April',
-    'May',
-    'June',
-    'July',
-    'August',
-    'September',
-    'October',
-    'November',
-    'December'
-  ];
-
-  return JSON.stringify({
-    unix: Math.floor(date.getTime() / 1000),
-    natural:
-      months[date.getMonth()] + ' ' + date.getDate() + ', ' + date.getFullYear()
-  });
-};
-routes.addRoute(/^\/(\d+)$/, function(request, response, matches) {
-  response.write(this.createResponse(new Date(Number(matches[0]) * 1000)));
-  response.end();
-});
-routes.addRoute(/^\/(\w+) (\d{1,2}), (\d{4})$/, function(
-  request,
-  response,
-  matches
-) {
-  response.write(this.createResponse(new Date(matches[0])));
-  response.end();
-});
-routes.addRoute(/^\/.*$/, function(request, response) {
-  response.write(JSON.stringify({ unix: null, natural: null }));
-  response.end();
+handler.addRoute(/^\/api\/timestamp\/(\d+)\/?$/, function(req, res, matches) {
+  let json = createResponse(new Date(Number(matches[1])));
+  res.write(JSON.stringify(json));
+  res.end();
 });
 
-var server = http.createServer(function(request, response) {
-  var pathname = url.parse(request.url).pathname;
-  var sanitized = pathname.replace(/%20/g, ' ');
-  var route = routes.getRoute(sanitized);
-  var matches = route.pattern.exec(sanitized);
-  route.handler(request, response, matches);
+handler.addRoute(/^\/api\/timestamp\/(.+)\/?$/, function(req, res, matches) {
+  let json = createResponse(new Date(matches[1]));
+  res.write(JSON.stringify(json));
+  res.end();
+});
+
+handler.addRoute(/^\/api\/timestamp\/?$/, (req, res) => {
+  let json = createResponse(new Date());
+  res.write(JSON.stringify(json));
+  res.end();
+});
+
+handler.addRoute(/$.*$/, (req, res) => {
+  let json = { error: 'Invalid URL' };
+  res.write(JSON.stringify(json));
+  res.end();
+});
+
+let server = http.createServer((req, res) => {
+  let pathname = url.parse(req.url).pathname;
+  let unescaped = querystring.unescape(pathname);
+  let route = handler.getRoute(unescaped);
+  let matches = route.pattern.exec(unescaped);
+  route.handler(req, res, matches);
 });
 
 server.listen(process.env.PORT);
