@@ -4,7 +4,7 @@ const http = require('http');
 const url = require('url');
 const querystring = require('querystring');
 
-const Handler = require('./handler');
+const { Handler } = require('./handler');
 
 let handler = new Handler();
 

@@ -12,4 +12,4 @@ class Handler {
   }
 }
 
-module.exports = Handler;
+module.exports = { Handler };
