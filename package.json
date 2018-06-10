@@ -6,7 +6,7 @@
   "author": "Nicholas Mason <nmt.mason@googlemail.com>",
   "license": "MIT",
   "devDependencies": {
-    "nodemon": "^1.11.0"
+    "nodemon": "^1.17.5"
   },
   "scripts": {
     "start": "node index.js",
