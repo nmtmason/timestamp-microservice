@@ -9,6 +9,9 @@
     "start": "node src/index.js",
     "watch": "nodemon src/index.js"
   },
+  "engines": {
+    "node": "10.x.x"
+  },
   "dependencies": {
     "dotenv": "^6.0.0"
   },
