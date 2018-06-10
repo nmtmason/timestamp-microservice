@@ -1,0 +1,9 @@
+GET http://127.0.0.1:4000/api/timestamp HTTP/1.1
+###
+GET http://127.0.0.1:4000/api/timestamp/2015-12-25 HTTP/1.1
+###
+GET http://127.0.0.1:4000/api/timestamp/1450137600000 HTTP/1.1
+###
+GET http://127.0.0.1:4000/ HTTP/1.1
+###
+GET http://127.0.0.1:4000/api/timestamp/01%20Jan%201970%2000:00:00%20GMT HTTP/1.1
